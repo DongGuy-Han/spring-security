@@ -21,21 +21,22 @@ public class ProjectSecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards").authenticated()
-                .requestMatchers("/notice", "/contact").permitAll())
+        http.csrf((csrf) -> csrf.disable())
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards").authenticated()
+                        .requestMatchers("/notice", "/contact", "/register").permitAll())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
-        return (SecurityFilterChain)http.build();
+        return (SecurityFilterChain) http.build();
     }
 
     /*@Bean
     public InMemoryUserDetailsManager userDetailsService() {
         *//**
-        * Approach 1 where we use withDefaultPasswordEncoder() method
-        while creating the user details
-        * *//*
-        *//*UserDetails admin = User.withDefaultPasswordEncoder()
+     * Approach 1 where we use withDefaultPasswordEncoder() method
+     while creating the user details
+     * *//*
+     *//*UserDetails admin = User.withDefaultPasswordEncoder()
                 .username("admin")
                 .password("12345")
                 .authorities("admin")
@@ -47,10 +48,12 @@ public class ProjectSecurityConfig {
                 .build();
         return new InMemoryUserDetailsManager(admin, user);*//*
 
-        *//**
-        * Approach 2 where we use NoOpPasswordEncoder Bean
-        while creating the user details
-        * *//*
+     */
+
+    /**
+     * Approach 2 where we use NoOpPasswordEncoder Bean
+     * while creating the user details
+     *//*
         UserDetails admin = User.withUsername("admin")
                 .password("12345")
                 .authorities("admin")
@@ -66,7 +69,6 @@ public class ProjectSecurityConfig {
     public UserDetailsService userDetailsService(DataSource dataSource) {
         return new JdbcUserDetailsManager(dataSource);
     }*/
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
